@@ -31,7 +31,7 @@ for n in mygen:
 
 sentiments = [0 for n in range(12500)] + [1 for n in range(12500)]
 
-hv = HashingVectorizer(ngram_range=(1,1), binary=True)
+hv = HashingVectorizer(ngram_range=(1,4), binary=True)
 X = hv.transform(reviews)
 current_max = [0,0]
 for n in range(0, 100000, 5000):
