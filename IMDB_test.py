@@ -40,14 +40,14 @@ for n in mygen:
 	# stemmed = ''
 	# for word in n.split():
 	# 	stemmed +=  stemmer.stem(word) +' '
-	reviews.append(negate_gram(n))
+	reviews.append(n)
 mygen = give_text('/Users/abdul/Desktop/RSI/test_code/train/neg/')
 for n in mygen:
 	# n = n.decode("utf8")
 	# stemmed = ''
 	# for word in n.split():
 	# 	stemmed +=  stemmer.stem(word) +' '
-	reviews.append(negate_gram(n))
+	reviews.append(n)
 
 mygen = give_text('/Users/abdul/Desktop/RSI/test_code/test/pos/')
 test_data = []
@@ -56,14 +56,14 @@ for n in mygen:
 	# stemmed = ''
 	# for word in n.split():
 	# 	stemmed +=  stemmer.stem(word) +' '
-	test_data.append(negate_gram(n))
+	test_data.append(n)
 mygen = give_text('/Users/abdul/Desktop/RSI/test_code/test/neg/')
 for n in mygen:
 	# n = n.decode("utf8")
 	# stemmed = ''
 	# for word in n.split():
 	# 	stemmed +=  stemmer.stem(word) +' '
-	test_data.append(negate_gram(n))
+	test_data.append(n)
 
 sentiments = [0 for n in range(12500)] + [1 for n in range(12500)]
 
