@@ -1,6 +1,7 @@
 from pyspark import SparkContext, SparkConf
 from pyspark.mllib.regression import LabeledPoint
 from pyspark.mllib.classification import NaiveBayes
+from pyspark.mllib.linalg import SparseVector
 
 conf = SparkConf().setAppName('sentimentAnalysis').setMaster('local')
 sc = SparkContext(conf=conf)
@@ -19,35 +20,45 @@ def ngram_range(text):
 
 amazon_dataset = sc.textFile('all.txt')
 
-reviews = amazon_dataset.filter(lambda l: 'review/text:' in l)
-sentiments = amazon_dataset.filter(lambda l: 'review/score:' in l).map(lambda l: 1.0 if float(l[-3:]) > 2.5 else 0.0)
+reviews = amazon_dataset.filter(lambda l: 'review/text:' in l).map(lambda l: l[13:])
+sentiments = amazon_dataset.filter(lambda l: 'review/score:' in l).map(lambda l: 1.0 if float(l[14:]) > 2.5 else 0.0)
 
-train_text = sc.parallelize(reviews.take(20)[:10])#[:int(reviews.count()*0.75)]) taking first 10 elements for local testing    #taking the first 75% of the reviews
-test_text = sc.parallelize(reviews.take(20)[10:])#[int(reviews.count()*0.75):])
+train_text = sc.parallelize(reviews.take(2000)[:1000])#[:int(reviews.count()*0.75)]) taking first 10 elements for local testing    #taking the first 75% of the reviews
+test_text = sc.parallelize(reviews.take(2000)[1000:])#[int(reviews.count()*0.75):])
 
-train_sentiments = sc.parallelize(sentiments.take(20)[:10])#[:int(sentiments.count()*0.75)])
-test_sentiments = sc.parallelize(sentiments.take(20)[10:])#[int(sentiments.count()*0.75):])
+train_sentiments = sc.parallelize(sentiments.take(2000)[:1000])#[:int(sentiments.count()*0.75)])
+test_sentiments = sc.parallelize(sentiments.take(2000)[1000:])#[int(sentiments.count()*0.75):])
 
-vocab = train_text.flatMap(ngram_range).distinct()
-vocab_dict = dict(vocab.zip(sc.parallelize([0 for n in range(vocab.count())])).collect())    #vocabulary dictionary. Format:  {'n-gram':0 for every n-gram in training set}
+vocab = train_text.flatMap(ngram_range).distinct().collect()
+# vocab_dict = dict(vocab.zip(sc.parallelize([0 for n in range(vocab.count())])).collect())    #vocabulary dictionary. Format:  {'n-gram':0 for every n-gram in training set}
 # vocab_dict.cache()
-def vectorizer(text, vocab=vocab_dict):
+def vectorizer(text, vocab=vocab):
 	'''
 	takes in a dictionary of the vocabulary and makes a binary feature vector where the features are word occurence
 	'''
+	i=0
+	nonzero = []
 	words = ngram_range(text)
-	vocab_copy = vocab.copy()
-	for word in words:
-		if word in vocab_copy:
-			vocab_copy[word] = 1
-	return vocab_copy.values()
+	
+	for word in vocab:
+		if word in words:
+			nonzero.append((i, 1))
+		else:
+			nonzero.append((i, 0))
+		i+=1
+	return SparseVector(i, nonzero)
 # train_text_vectors = train_text.map(vectorizer)
-training_vectors = sc.parallelize(zip(train_sentiments.collect(), train_text.map(vectorizer).collect())).map(LabeledPoint).collect()
+print '#########################################################'
+print 'Checkpoint 1'
+training_vectors = train_sentiments.zip(train_text.map(vectorizer))
 test_vectors = test_text.map(vectorizer)
+clf = NaiveBayes.train(training_vectors.map(lambda labeled: LabeledPoint(labeled[0], labeled[1])))
+print '#########################################################'
+print 'Checkpoint 2'
+predictions = test_vectors.map(clf.predict)
+print predictions.collect()
+print test_sentiments.collect()
+num_correct = float(predictions.zip(test_sentiments).filter(lambda x: x[0] == x[1]).count())
+num_total = float(predictions.count())
 
-clf = NaiveBayes.train(sc.parallelize(training_vectors))
-predictions = clf.predict(test_vectors)
-
-accuracy = predictions.zip(test_sentiments).filter(lambda x: x[0] != x[1]).count()/predictions.count()
-
-print accuracy
+print num_correct, num_total, num_correct/num_total
