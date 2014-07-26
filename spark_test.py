@@ -29,7 +29,7 @@ test_text = sc.parallelize(reviews.take(2000)[1000:])#[int(reviews.count()*0.75)
 train_sentiments = sc.parallelize(sentiments.take(2000)[:1000])#[:int(sentiments.count()*0.75)])
 test_sentiments = sc.parallelize(sentiments.take(2000)[1000:])#[int(sentiments.count()*0.75):])
 
-vocab = train_text.flatMap(ngram_range).distinct().collect()
+vocab = train_text.flatMap(ngram_range).distinct().cache().collect()
 # vocab_dict = dict(vocab.zip(sc.parallelize([0 for n in range(vocab.count())])).collect())    #vocabulary dictionary. Format:  {'n-gram':0 for every n-gram in training set}
 # vocab_dict.cache()
 def vectorizer(text, vocab=vocab):
@@ -43,18 +43,27 @@ def vectorizer(text, vocab=vocab):
 	for word in vocab:
 		if word in words:
 			nonzero.append((i, 1))
-		else:
-			nonzero.append((i, 0))
+		# else:
+		# 	nonzero.append((i, 0))
 		i+=1
 	return SparseVector(i, nonzero)
+	# words = ngram_range(text)
+	# copy = vocab_dict.copy()
+	# for word in words:
+	# 	if word in copy:
+	# 		copy[word] = 1
+	# vector = []
+	# return copy.values()
+
 # train_text_vectors = train_text.map(vectorizer)
 print '#########################################################'
 print 'Checkpoint 1'
-training_vectors = train_sentiments.zip(train_text.map(vectorizer))
-test_vectors = test_text.map(vectorizer)
-clf = NaiveBayes.train(training_vectors.map(lambda labeled: LabeledPoint(labeled[0], labeled[1])))
+training_vectors = train_sentiments.zip(train_text.map(vectorizer)).map(lambda labeled: LabeledPoint(labeled[0], labeled[1])).collect()
+print 'Checkpoint 1.5'
+clf = NaiveBayes.train(training_vectors)
 print '#########################################################'
 print 'Checkpoint 2'
+test_vectors = test_text.map(vectorizer)
 predictions = test_vectors.map(clf.predict)
 print predictions.collect()
 print test_sentiments.collect()
