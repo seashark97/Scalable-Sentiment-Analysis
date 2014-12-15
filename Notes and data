@@ -21,3 +21,28 @@ Accuracy: 0.742000    Number of features: 85000
 Accuracy: 0.744000    Number of features: 90000
 Accuracy: 0.746000    Number of features: 95000
 Best number of features: 5000    Accuracy: 0.774000
+
+
+___accuracies for sample of 50000___
+
+Accuracy: 0.853400    Number of features: 0
+Accuracy: 0.861880    Number of features: 5000
+Accuracy: 0.864160    Number of features: 10000
+Accuracy: 0.864960    Number of features: 15000
+Accuracy: 0.865960    Number of features: 20000
+Accuracy: 0.866480    Number of features: 25000
+Accuracy: 0.867040    Number of features: 30000
+Accuracy: 0.866280    Number of features: 35000
+Accuracy: 0.866320    Number of features: 40000
+Accuracy: 0.865840    Number of features: 45000
+Accuracy: 0.864920    Number of features: 50000
+Accuracy: 0.863960    Number of features: 55000
+Accuracy: 0.864720    Number of features: 60000
+Accuracy: 0.864240    Number of features: 65000
+Accuracy: 0.863840    Number of features: 70000
+Accuracy: 0.863760    Number of features: 75000
+Accuracy: 0.863000    Number of features: 80000
+Accuracy: 0.862480    Number of features: 85000
+Accuracy: 0.862120    Number of features: 90000
+Accuracy: 0.861840    Number of features: 95000
+Best number of features: 30000    Accuracy: 0.867040

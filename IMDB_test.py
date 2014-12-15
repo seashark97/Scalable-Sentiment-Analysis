@@ -7,17 +7,20 @@ import glob
 import time
 from nltk.stem.snowball import EnglishStemmer
 from nltk.stem.porter import *
+
+SAMPLE_SIZE = 25000 #number of reviews to test and train. Total = 25000
+
 def give_text(directory):
 	'''
 	text generator for memory saving
 	'''
-	for i in range(12500):
+	for i in range(SAMPLE_SIZE/2):
 		temp = open(glob.glob(directory+str(i)+'_'+'*.txt')[0], 'r')
 		text = temp.read()
 		temp.close()
 		yield text
 stemmer = PorterStemmer()
-mygen = give_text('/Users/abdul/Desktop/RSI/test_code/train/pos/')
+
 reviews = []
 
 def negate_gram(document):
@@ -34,14 +37,14 @@ def negate_gram(document):
 			negated = False
 	return ' '.join(review)
 
-
+mygen = give_text('/Users/apple/Desktop/RSI/aclImdb/train/pos/')
 for n in mygen:
 	# n = n.decode("utf8")
 	# stemmed = ''
 	# for word in n.split():
 	# 	stemmed +=  stemmer.stem(word) +' '
 	reviews.append(n)
-mygen = give_text('/Users/abdul/Desktop/RSI/test_code/train/neg/')
+mygen = give_text('/Users/apple/Desktop/RSI/aclImdb/train/neg/')
 for n in mygen:
 	# n = n.decode("utf8")
 	# stemmed = ''
@@ -49,7 +52,7 @@ for n in mygen:
 	# 	stemmed +=  stemmer.stem(word) +' '
 	reviews.append(n)
 
-mygen = give_text('/Users/abdul/Desktop/RSI/test_code/test/pos/')
+mygen = give_text('/Users/apple/Desktop/RSI/aclImdb/test/pos/')
 test_data = []
 for n in mygen:
 	# n = n.decode("utf8")
@@ -57,7 +60,7 @@ for n in mygen:
 	# for word in n.split():
 	# 	stemmed +=  stemmer.stem(word) +' '
 	test_data.append(n)
-mygen = give_text('/Users/abdul/Desktop/RSI/test_code/test/neg/')
+mygen = give_text('/Users/apple/Desktop/RSI/aclImdb/test/neg/')
 for n in mygen:
 	# n = n.decode("utf8")
 	# stemmed = ''
@@ -65,7 +68,7 @@ for n in mygen:
 	# 	stemmed +=  stemmer.stem(word) +' '
 	test_data.append(n)
 
-sentiments = [0 for n in range(12500)] + [1 for n in range(12500)]
+sentiments = [0 for n in range(SAMPLE_SIZE/2)] + [1 for n in range(SAMPLE_SIZE/2)]
 
 hv = HashingVectorizer(ngram_range=(1,3), binary=False, non_negative=True)
 X = hv.transform(reviews)
@@ -89,6 +92,6 @@ for n in range(0, 100000, 5000):
 	print 'Accuracy: %f    Number of features: %d' % (accuracy, n)
 print 'Best number of features: %d    Accuracy: %f' % (current_max[1], current_max[0])
 
-
-
-# print accuracy_score(sentiments, predicted), precision_score(sentiments, predicted), recall_score(sentiments, predicted)
+while True:
+	demo_review = raw_input('Enter a review:')
+	print clf.predict(selector.transform(hv.fit_transform([demo_review])))
