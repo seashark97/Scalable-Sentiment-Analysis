@@ -1,0 +1,23 @@
+___ accuracies for sample size of 1000___
+
+Accuracy: 0.751000    Number of features: 0
+Accuracy: 0.774000    Number of features: 5000
+Accuracy: 0.755000    Number of features: 10000
+Accuracy: 0.761000    Number of features: 15000
+Accuracy: 0.757000    Number of features: 20000
+Accuracy: 0.751000    Number of features: 25000
+Accuracy: 0.740000    Number of features: 30000
+Accuracy: 0.740000    Number of features: 35000
+Accuracy: 0.738000    Number of features: 40000
+Accuracy: 0.740000    Number of features: 45000
+Accuracy: 0.743000    Number of features: 50000
+Accuracy: 0.741000    Number of features: 55000
+Accuracy: 0.744000    Number of features: 60000
+Accuracy: 0.743000    Number of features: 65000
+Accuracy: 0.740000    Number of features: 70000
+Accuracy: 0.742000    Number of features: 75000
+Accuracy: 0.740000    Number of features: 80000
+Accuracy: 0.742000    Number of features: 85000
+Accuracy: 0.744000    Number of features: 90000
+Accuracy: 0.746000    Number of features: 95000
+Best number of features: 5000    Accuracy: 0.774000
