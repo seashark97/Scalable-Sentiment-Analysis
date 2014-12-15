@@ -8,7 +8,7 @@ import time
 from nltk.stem.snowball import EnglishStemmer
 from nltk.stem.porter import *
 
-SAMPLE_SIZE = 25000 #number of reviews to test and train. Total = 25000
+SAMPLE_SIZE = 1000 #number of reviews to test and train. Total = 25000
 
 def give_text(directory):
 	'''
